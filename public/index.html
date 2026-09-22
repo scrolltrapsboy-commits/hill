@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1020">
+  <title>SmartCare • Live Heart Monitor</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Manrope:wght@200..800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <!-- Ambient background elements -->
+  <div class="ambient-glow ambient-glow-primary" aria-hidden="true"></div>
+  <div class="ambient-glow ambient-glow-secondary" aria-hidden="true"></div>
+
+  <!-- Main Navigation Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <a class="brand" href="/" aria-label="SmartCare Sync Home">
+        <span class="brand-icon" aria-hidden="true">✚</span>
+        <span class="brand-text">
+          smartcare<span class="brand-accent">/sync</span>
+          <small class="brand-tagline">CONNECTED HEALTH</small>
+        </span>
+      </a>
+
+      <div class="header-actions">
+        <div class="connection-status" role="status" aria-live="polite">
+          <span class="status-indicator"></span>
+          <span id="connectionLabel">Connecting</span>
+        </div>
+        <button class="avatar-button" aria-label="User Profile">
+          <span class="avatar-text">SC</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Application Main Content -->
+  <main class="app-main wrap">
+    <!-- Hero / Welcome Banner -->
+    <section class="welcome-section" aria-labelledby="welcome-heading">
+      <div class="welcome-content">
+        <div class="eyebrow">
+          <span>PATIENT MONITORING</span>
+          <span class="eyebrow-line" aria-hidden="true"></span>
+        </div>
+        <h1 id="welcome-heading">Your heart, <em>in real time.</em></h1>
+        <p>Live heart-rate telemetry received from your SmartCare Android application.</p>
+      </div>
+
+      <div class="time-card">
+        <span class="time-icon" aria-hidden="true">◷</span>
+        <div class="time-details">
+          <small>LOCAL TIME</small>
+          <time id="clock" datetime="00:00:00">--:--:--</time>
+        </div>
+      </div>
+    </section>
+
+    <!-- Top Dashboard Grid: Real-time Vitals & Overview -->
+    <section class="dashboard-grid primary-grid" aria-label="Live Telemetry">
+      
+      <!-- Primary Live Heart Rate Card -->
+      <article class="card card-hero">
+        <header class="card-header">
+          <div>
+            <span class="kicker">LIVE TELEMETRY</span>
+            <h2>Heart rate</h2>
+          </div>
+          <span class="status-badge status-live">
+            <span class="pulse-dot" aria-hidden="true"></span> LIVE
+          </span>
+        </header>
+
+        <div class="card-body">
+          <div class="bpm-display">
+            <div class="bpm-value-group">
+              <span class="bpm-number" id="bpm">--</span>
+              <span class="bpm-unit">bpm</span>
+            </div>
+            <div class="heart-icon-wrapper" aria-hidden="true">
+              <span class="heart-icon">♥</span>
+            </div>
+          </div>
+
+          <div class="reading-state-bar">
+            <span class="state-dot" id="readingDot"></span>
+            <span id="readingState" role="status">Waiting for initial measurement…</span>
+          </div>
+
+          <div class="chart-container">
+            <canvas id="chart" aria-label="Heart rate trend chart over time" role="img"></canvas>
+            <div class="chart-axis-labels" aria-hidden="true">
+              <span>OLDER</span>
+              <span>RECENT</span>
+              <span>NOW</span>
+            </div>
+          </div>
+        </div>
+
+        <footer class="card-footer">
+          <span>Last received</span>
+          <time id="lastSeen" datetime="">No data yet</time>
+        </footer>
+      </article>
+
+      <!-- Overview Stats Card -->
+      <article class="card card-overview">
+        <header class="card-header">
+          <div>
+            <span class="kicker">SESSION OVERVIEW</span>
+            <h2>At a glance</h2>
+          </div>
+          <div class="card-icon-badge" aria-hidden="true">⌁</div>
+        </header>
+
+        <div class="card-body stat-stack">
+          <div class="stat-item">
+            <div class="stat-icon icon-mint" aria-hidden="true">↗</div>
+            <div class="stat-content">
+              <small>Latest reading</small>
+              <strong id="latestStat" class="stat-value">— <small>bpm</small></strong>
+              <span class="stat-subtext" id="latestTime">Waiting for data</span>
+            </div>
+          </div>
+
+          <hr class="stat-divider">
+
+          <div class="stat-item">
+            <div class="stat-icon icon-violet" aria-hidden="true">▤</div>
+            <div class="stat-content">
+              <small>Readings this session</small>
+              <strong id="count" class="stat-value">0</strong>
+              <span class="stat-subtext">Received by this dashboard</span>
+            </div>
+          </div>
+
+          <hr class="stat-divider">
+
+          <div class="stat-item">
+            <div class="stat-icon icon-amber" aria-hidden="true">⌚</div>
+            <div class="stat-content">
+              <small>Source device</small>
+              <strong id="source" class="stat-value source-name">Not connected</strong>
+              <span class="stat-subtext" id="deviceId">Device ID unavailable</span>
+            </div>
+          </div>
+        </div>
+
+        <footer class="card-footer notice-footer">
+          <div class="disclaimer-notice">
+            <span class="notice-icon" aria-hidden="true">ⓘ</span>
+            <p>For demonstration and monitoring only. Smartwatch readings are not a clinical diagnosis or a substitute for professional medical advice.</p>
+          </div>
+        </footer>
+      </article>
+
+    </section>
+
+    <!-- Lower Dashboard Grid: History & Integration Settings -->
+    <section class="dashboard-grid secondary-grid" aria-label="Activity and Connectivity">
+      
+      <!-- Activity Feed -->
+      <article class="card card-feed">
+        <header class="card-header">
+          <div>
+            <span class="kicker">RECENT ACTIVITY</span>
+            <h2>Reading history</h2>
+          </div>
+          <span class="pill-tag">Latest 12</span>
+        </header>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">TIME</th>
+                <th scope="col">HEART RATE</th>
+                <th scope="col">SOURCE</th>
+                <th scope="col">STATUS</th>
+              </tr>
+            </thead>
+            <tbody id="history">
+              <tr>
+                <td colspan="4" class="table-empty-state">
+                  Waiting for your Android app to send a reading…
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- App Connectivity Panel -->
+      <article class="card card-connect">
+        <header class="card-header">
+          <div>
+            <span class="kicker">APP CONNECTION</span>
+            <h2>Connect SmartCare</h2>
+          </div>
+          <div class="card-icon-badge" aria-hidden="true">⌘</div>
+        </header>
+
+        <div class="card-body">
+          <p class="connect-description">
+            Send each valid BLE heart-rate measurement from your Android app to this dashboard using the REST endpoint below.
+          </p>
+
+          <div class="form-group">
+            <label for="endpoint">API Endpoint</label>
+            <div class="endpoint-input-group">
+              <code id="endpoint" class="code-block">/api/heart-rate</code>
+              <button id="copyEndpoint" class="btn btn-secondary btn-icon" aria-label="Copy API endpoint to clipboard">
+                <span>Copy</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label id="json-label">JSON Payload Example</label>
+            <div class="code-editor-preview">
+              <pre aria-labelledby="json-label"><code>{
+  "bpm": 76,
+  "timestamp": "2026-09-22T13:00:00Z",
+  "source": "PRISM_8E23",
+  "deviceId": "optional-device-id"
+}</code></pre>
+            </div>
+          </div>
+
+          <div class="status-banner">
+            <span class="status-led-indicator"></span>
+            <div class="status-banner-text">
+              <strong id="apiStatus">API is ready</strong>
+              <small>POST JSON · application/json</small>
+            </div>
+          </div>
+
+          <button id="demoBtn" class="btn btn-primary btn-block">
+            <span>Send demo reading</span>
+            <span aria-hidden="true">↗</span>
+          </button>
+          
+          <p class="micro-copy">Demo readings are clearly marked and are not measurements from your watch.</p>
+        </div>
+      </article>
+
+    </section>
+  </main>
+
+  <!-- Global App Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <span>✚ SmartCare Sync</span>
+      <span class="footer-divider">•</span>
+      <span>Live Data Dashboard</span>
+      <span class="footer-divider">•</span>
+      <span>Secure Deployment Recommended</span>
+    </div>
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true">
+    Copied to clipboard
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
