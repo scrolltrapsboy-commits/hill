@@ -1,2 +1,882 @@
-:root{--bg:#0b1020;--panel:rgba(19,27,49,.82);--line:rgba(173,190,229,.12);--text:#f4f7ff;--muted:#8996b5;--mint:#5ce1c0;--violet:#a99bff;--amber:#ffc879}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 18% 0%,#19264b 0,transparent 38%),var(--bg);color:var(--text);font-family:"DM Sans",sans-serif;min-height:100vh;overflow-x:hidden}.ambient{position:fixed;width:420px;height:420px;border-radius:50%;filter:blur(100px);opacity:.12;pointer-events:none;z-index:-1}.a1{background:#655bff;top:30%;left:-240px}.a2{background:#27cbb3;right:-300px;top:50%}.topbar{height:78px;padding:0 max(calc((100% - 1180px)/2),28px);border-bottom:1px solid rgba(180,194,229,.09);display:flex;align-items:center;justify-content:space-between;background:rgba(9,14,29,.55);backdrop-filter:blur(16px)}.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--text);font:800 18px Manrope,sans-serif;letter-spacing:-.7px}.brandmark{width:36px;height:36px;border-radius:12px;background:linear-gradient(140deg,#75ebce,#3caeae);display:grid;place-items:center;color:#102438;font-size:22px;box-shadow:0 5px 24px #42d8bd33}.muted-brand{color:#8191b5}.brand small{display:block;font:600 8px "DM Sans";letter-spacing:2px;color:#7d8aaa;margin-top:3px}.top-right{display:flex;align-items:center;gap:18px}.live-pill{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);border-radius:30px;font-size:12px;color:#c1cce5;background:#121a30}.live-pill i,.pulse{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 12px #5ce1c088}.avatar{width:34px;height:34px;border-radius:50%;background:#293654;display:grid;place-items:center;color:#b5c7e8;font-size:11px;font-weight:700}.wrap{max-width:1180px;margin:0 auto;padding:46px 28px 24px}.welcome{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px}.eyebrow,.kicker{font-size:10px;letter-spacing:1.8px;color:#8392b5;font-weight:700}.line{display:inline-block;width:34px;height:1px;background:#455573;vertical-align:middle;margin-left:8px}h1,h2{font-family:Manrope,sans-serif;letter-spacing:-1.3px;margin:0}h1{font-size:clamp(30px,4vw,42px);margin-top:11px;font-weight:700}h1 em{font-style:normal;color:var(--mint)}.welcome p{margin:10px 0 0;color:var(--muted);font-size:14px}.datebox{display:flex;align-items:center;gap:11px;background:#131c33;border:1px solid var(--line);padding:12px 17px;border-radius:15px}.date-icon{font-size:23px;color:#a8b7d7}.datebox small,.datebox strong{display:block}.datebox small{font-size:9px;color:#7888aa;letter-spacing:1.4px}.datebox strong{font:600 15px Manrope;margin-top:3px}.grid{display:grid;grid-template-columns:1.22fr .88fr;gap:20px}.card{background:linear-gradient(145deg,rgba(22,32,57,.94),rgba(15,23,43,.92));border:1px solid rgba(160,180,224,.13);border-radius:22px;padding:27px;box-shadow:0 20px 70px #00000019}.card-head,.section-heading{display:flex;align-items:center;justify-content:space-between}.card h2{font-size:21px;margin-top:6px}.badge{display:flex;align-items:center;gap:7px;color:var(--mint);background:#143b3c66;border:1px solid #48d9bd30;border-radius:20px;padding:7px 11px;font-size:9px;font-weight:800;letter-spacing:1px}.bpm-wrap{display:flex;justify-content:space-between;align-items:center;margin:22px 0 5px}.bpm{font:800 clamp(66px,8vw,92px) Manrope;letter-spacing:-7px;line-height:1;color:#f5f9ff}.unit{font-size:14px;color:#a0adc9;margin-left:12px}.heart-icon{font-size:33px;color:#ff789e;text-shadow:0 0 24px #ff548655;animation:beat 1.7s infinite}@keyframes beat{0%,100%{transform:scale(1)}8%{transform:scale(1.14)}16%{transform:scale(1)}}.reading-note{display:flex;align-items:center;gap:8px;color:#8392b1;font-size:12px}.dot{width:6px;height:6px;border-radius:50%;background:#7b89a8}.dot.active{background:var(--mint);box-shadow:0 0 10px #5ce1c0}.chart-area{height:165px;margin-top:17px;position:relative;border-bottom:1px solid #27334e;background:repeating-linear-gradient(to bottom,transparent 0,transparent 40px,#27324a 41px,#27324a 42px)}canvas{width:100%;height:138px;display:block}.chart-labels{display:flex;justify-content:space-between;color:#687897;font-size:8px;letter-spacing:1.2px;padding-top:7px}.heart-foot{display:flex;justify-content:space-between;color:#7f8ead;font-size:11px;margin-top:18px}.heart-foot strong{color:#cbd5eb;font-weight:600}.round-icon{width:35px;height:35px;border:1px solid var(--line);border-radius:12px;display:grid;place-items:center;color:#a6b6d8;font-size:20px}.stat{display:flex;gap:13px;align-items:center;padding:20px 0}.stat-icon{width:39px;height:39px;border-radius:13px;display:grid;place-items:center;font-size:19px}.mint{color:var(--mint);background:#183b40}.violet{color:var(--violet);background:#302d50}.amber{color:var(--amber);background:#44372d}.stat small,.stat strong,.stat .sub{display:block}.stat small{font-size:11px;color:#8290af}.stat strong{font:700 22px Manrope;margin-top:3px}.stat strong small{display:inline;color:#a3b1cd;font:500 11px "DM Sans"}.stat .sub{font-size:10px;color:#7584a3;margin-top:4px}.source-name{font-size:16px!important;max-width:240px;overflow-wrap:anywhere}.divider{height:1px;background:var(--line)}.notice{display:flex;gap:10px;padding:12px 13px;border:1px solid #66543a44;background:#302b273d;border-radius:12px;margin-top:10px;color:#e9bc7c}.notice p{font-size:10px;line-height:1.6;color:#a7a7b2;margin:0}.lower-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:20px;margin-top:20px}.section-heading{margin-bottom:20px}.tiny-tag{font-size:10px;color:#92a0bf;border:1px solid var(--line);border-radius:20px;padding:7px 10px}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;text-align:left;white-space:nowrap}th{font-size:9px;letter-spacing:1px;color:#7181a2;font-weight:700;padding:0 10px 12px;border-bottom:1px solid var(--line)}td{font-size:11px;color:#b9c5df;padding:14px 10px;border-bottom:1px solid #9daed10d}td:nth-child(2){font-weight:700;color:#f1f6ff}.empty{text-align:center;color:#7888a7;padding:30px 5px;white-space:normal}.status-chip{display:inline-flex;align-items:center;gap:6px;color:var(--mint);font-size:9px;background:#173c3a;border-radius:20px;padding:5px 8px}.status-chip:before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}.connect-copy{font-size:12px;color:#8796b5;line-height:1.65;margin:-4px 0 18px}.connect-card label{display:block;font-size:10px;color:#8d9bbc;margin:15px 0 7px;font-weight:600}.endpoint{display:flex;align-items:center;justify-content:space-between;border:1px solid #303d5b;background:#0d1528;border-radius:10px;padding:7px 8px 7px 12px}.endpoint code{font-size:11px;color:#b4c8ed}.endpoint button{border:0;background:#293654;color:#dce6fa;border-radius:7px;padding:7px 11px;font-size:10px;cursor:pointer}pre{margin:0;padding:13px;background:#0d1528;border:1px solid #273450;border-radius:10px;color:#9ec6c0;font:10px/1.8 ui-monospace,monospace;overflow:auto}.connect-status{display:flex;gap:10px;align-items:center;margin-top:17px}.status-led{width:9px;height:9px;border-radius:50%;background:var(--mint);box-shadow:0 0 13px #5ce1c088}.connect-status strong,.connect-status small{display:block}.connect-status strong{font-size:11px;color:#dbe5f9}.connect-status small{font-size:9px;color:#7888a8;margin-top:4px}.test-btn{width:100%;display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding:13px 15px;border:1px solid #5ce1c04d;border-radius:11px;background:linear-gradient(100deg,#2d817e,#266d75);color:#f1fffc;font:600 12px "DM Sans";cursor:pointer;transition:.2s}.test-btn:hover{filter:brightness(1.13);transform:translateY(-1px)}.test-btn:disabled{opacity:.55;cursor:wait}.small-note{font-size:9px;color:#7383a3;line-height:1.5;margin:10px 0 0}footer{display:flex;justify-content:space-between;gap:15px;margin:27px 3px 0;color:#647392;font-size:10px}footer span:first-child{font-weight:700;color:#91a1c0}footer b{color:var(--mint);padding:0 5px}.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);background:#e9fff9;color:#123b39;border-radius:9px;padding:10px 17px;font-size:12px;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}@media(max-width:800px){.grid,.lower-grid{grid-template-columns:1fr}.welcome{align-items:flex-start;gap:20px;flex-direction:column}.datebox{align-self:flex-start}.wrap{padding:32px 16px 22px}.topbar{padding:0 16px}.card{padding:21px}.bpm{letter-spacing:-5px}.overview-card{order:2}}@media(max-width:430px){.brand{font-size:16px}.live-pill{font-size:10px}.avatar{display:none}.card{border-radius:17px;padding:18px}.bpm{font-size:68px}.heart-icon{font-size:26px}h1{font-size:30px}.welcome p{font-size:12px}footer{flex-direction:column}}
+/* ==========================================================================
+   SmartCare Sync • Minimalist Dark Glass Theme
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Custom Properties & Theme Setup
+   -------------------------------------------------------------------------- */
+:root {
+  /* Color Palette */
+  --bg-dark: #0b0f19;
+  --bg-ambient-1: rgba(255, 77, 109, 0.08);
+  --bg-ambient-2: rgba(138, 43, 226, 0.08);
+  
+  /* Glass Surface Tokens */
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-bg-hover: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-light: rgba(255, 255, 255, 0.12);
+  --glass-blur: blur(20px);
+  --glass-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+
+  /* Brand & Accent Colors */
+  --primary-rose: #ff4d6d;
+  --primary-rose-glow: rgba(255, 77, 109, 0.35);
+  --accent-violet: #8a2be2;
+  --accent-mint: #00f5d4;
+  --accent-amber: #ffb703;
+  --accent-blue: #3a86ff;
+
+  /* Typography Colors */
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-subtle: #64748b;
+
+  /* Fonts */
+  --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Manrope', var(--font-sans);
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Radii & Transitions */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 9999px;
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --------------------------------------------------------------------------
+   2. Reset & Global Styles
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  color-scheme: dark;
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+}
+
+/* Background Ambient Lighting Glows */
+.ambient-glow {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambient-glow-primary {
+  width: 500px;
+  height: 500px;
+  top: -100px;
+  left: -100px;
+  background: var(--bg-ambient-1);
+}
+
+.ambient-glow-secondary {
+  width: 600px;
+  height: 600px;
+  bottom: -150px;
+  right: -100px;
+  background: var(--bg-ambient-2);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* --------------------------------------------------------------------------
+   3. Header Navigation Bar
+   -------------------------------------------------------------------------- */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(11, 15, 25, 0.7);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: var(--text-main);
+}
+
+.brand-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255, 77, 109, 0.15);
+  color: var(--primary-rose);
+  font-weight: bold;
+  font-size: 1.2rem;
+  border: 1px solid rgba(255, 77, 109, 0.3);
+}
+
+.brand-text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: -0.02em;
+}
+
+.brand-accent {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.brand-tagline {
+  display: block;
+  font-size: 0.65rem;
+  font-family: var(--font-sans);
+  color: var(--text-subtle);
+  letter-spacing: 0.1em;
+  margin-top: -2px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-pill);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  font-size: 0.825rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-amber);
+  box-shadow: 0 0 8px var(--accent-amber);
+  animation: pulse-glow 2s infinite;
+}
+
+.avatar-button {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-violet), var(--primary-rose));
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform var(--transition-fast);
+}
+
+.avatar-button:hover {
+  transform: scale(1.05);
+}
+
+/* --------------------------------------------------------------------------
+   4. Layout Containers & Grid Systems
+   -------------------------------------------------------------------------- */
+.app-main {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.primary-grid {
+  grid-template-columns: 1.6fr 1fr;
+}
+
+.secondary-grid {
+  grid-template-columns: 1.4fr 1fr;
+}
+
+/* --------------------------------------------------------------------------
+   5. Hero / Welcome Banner
+   -------------------------------------------------------------------------- */
+.welcome-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--primary-rose);
+  margin-bottom: 0.5rem;
+}
+
+.eyebrow-line {
+  height: 1px;
+  width: 40px;
+  background: linear-gradient(90deg, var(--primary-rose), transparent);
+}
+
+.welcome-content h1 {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.welcome-content h1 em {
+  font-style: normal;
+  background: linear-gradient(135deg, #fff 30%, var(--text-muted));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.welcome-content p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+}
+
+.time-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1.25rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  border-radius: var(--radius-md);
+}
+
+.time-icon {
+  font-size: 1.25rem;
+  color: var(--text-muted);
+}
+
+.time-details small {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--text-subtle);
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.time-details time {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* --------------------------------------------------------------------------
+   6. Frosted Glass Cards (Components)
+   -------------------------------------------------------------------------- */
+.card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  box-shadow: var(--glass-shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: border-color var(--transition-normal), transform var(--transition-normal);
+}
+
+.card:hover {
+  border-color: var(--glass-border-light);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.kicker {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-subtle);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.card-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: rgba(255, 77, 109, 0.12);
+  color: var(--primary-rose);
+  border: 1px solid rgba(255, 77, 109, 0.25);
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary-rose);
+  box-shadow: 0 0 10px var(--primary-rose);
+  animation: pulse-scale 1.5s infinite ease-in-out;
+}
+
+.card-icon-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.pill-tag {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  border: 1px solid var(--glass-border);
+}
+
+/* --------------------------------------------------------------------------
+   7. Live Heart Rate Widget Specifics
+   -------------------------------------------------------------------------- */
+.bpm-display {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.bpm-value-group {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.bpm-number {
+  font-family: var(--font-display);
+  font-size: 4.5rem;
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--text-main);
+  text-shadow: 0 0 30px rgba(255, 77, 109, 0.2);
+}
+
+.bpm-unit {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.heart-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 77, 109, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 77, 109, 0.2);
+}
+
+.heart-icon {
+  font-size: 2rem;
+  color: var(--primary-rose);
+  animation: heart-beat 1.2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+.reading-state-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.state-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-subtle);
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 120px;
+  margin-bottom: 1rem;
+}
+
+.chart-axis-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-subtle);
+  margin-top: 0.5rem;
+}
+
+.card-footer {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--glass-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.825rem;
+  color: var(--text-muted);
+}
+
+.card-footer time, .card-footer strong {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   8. Stats & Overview Components
+   -------------------------------------------------------------------------- */
+.stat-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stat-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.icon-mint { background: rgba(0, 245, 212, 0.12); color: var(--accent-mint); }
+.icon-violet { background: rgba(138, 43, 226, 0.12); color: var(--accent-violet); }
+.icon-amber { background: rgba(255, 183, 3, 0.12); color: var(--accent-amber); }
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-content small {
+  font-size: 0.75rem;
+  color: var(--text-subtle);
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.stat-subtext {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.stat-divider {
+  border: none;
+  height: 1px;
+  background: var(--glass-border);
+  margin: 0.25rem 0;
+}
+
+.disclaimer-notice {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  font-size: 0.775rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.notice-icon {
+  color: var(--accent-blue);
+  font-size: 0.95rem;
+}
+
+/* --------------------------------------------------------------------------
+   9. Activity Data Table
+   -------------------------------------------------------------------------- */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.data-table th {
+  padding: 0.85rem 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-subtle);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.data-table td {
+  padding: 1rem;
+  color: var(--text-main);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.data-table tbody tr:hover {
+  background: var(--glass-bg-hover);
+}
+
+.table-empty-state {
+  text-align: center;
+  padding: 3rem 1rem !important;
+  color: var(--text-subtle) !important;
+  font-style: italic;
+}
+
+/* --------------------------------------------------------------------------
+   10. Form Elements & Integration Panel
+   -------------------------------------------------------------------------- */
+.card-connect .card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.connect-description {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-subtle);
+  letter-spacing: 0.05em;
+}
+
+.endpoint-input-group {
+  display: flex;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  padding: 0.25rem;
+}
+
+.code-block {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--accent-mint);
+  padding: 0.6rem 0.85rem;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+
+.code-editor-preview {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.code-editor-preview pre {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Custom Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.btn-primary {
+  background: var(--text-main);
+  color: var(--bg-dark);
+}
+
+.btn-primary:hover {
+  background: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.btn-secondary {
+  background: var(--glass-bg);
+  border-color: var(--glass-border);
+  color: var(--text-main);
+}
+
+.btn-secondary:hover {
+  background: var(--glass-bg-hover);
+  border-color: var(--glass-border-light);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.status-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  background: rgba(0, 245, 212, 0.05);
+  border: 1px solid rgba(0, 245, 212, 0.15);
+  border-radius: var(--radius-md);
+}
+
+.status-led-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent-mint);
+  box-shadow: 0 0 10px var(--accent-mint);
+}
+
+.status-banner-text strong {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--accent-mint);
+}
+
+.status-banner-text small {
+  font-size: 0.7rem;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+}
+
+.micro-copy {
+  font-size: 0.725rem;
+  color: var(--text-subtle);
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   11. Footer & Toast Components
+   -------------------------------------------------------------------------- */
+.app-footer {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid var(--glass-border);
+  padding: 2rem 1.5rem;
+  margin-top: 2rem;
+  background: rgba(11, 15, 25, 0.5);
+  backdrop-filter: var(--glass-blur);
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--text-subtle);
+}
+
+.footer-divider {
+  color: var(--glass-border-light);
+}
+
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: rgba(18, 24, 38, 0.9);
+  border: 1px solid var(--glass-border-light);
+  backdrop-filter: var(--glass-blur);
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-pill);
+  color: var(--text-main);
+  font-size: 0.85rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all var(--transition-normal);
+  z-index: 1000;
+}
+
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   12. Animations
+   -------------------------------------------------------------------------- */
+@keyframes heart-beat {
+  0% { transform: scale(1); }
+  14% { transform: scale(1.18); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.12); }
+  70% { transform: scale(1); }
+}
+
+@keyframes pulse-scale {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.4; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* --------------------------------------------------------------------------
+   13. Responsive Media Queries
+   -------------------------------------------------------------------------- */
+@media (max-width: 992px) {
+  .primary-grid, .secondary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .welcome-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .welcome-content h1 {
+    font-size: 1.75rem;
+  }
+
+  .bpm-number {
+    font-size: 3.5rem;
+  }
+
+  .card {
+    padding: 1.25rem;
+  }
+}
