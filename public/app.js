@@ -36,21 +36,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const alertBanner = document.getElementById('alertBanner');
   const alertMessage = document.getElementById('alertMessage');
 
-  // Local Clock
+  // Clock
   function updateClock() {
     if (clockEl) clockEl.textContent = new Date().toLocaleTimeString();
   }
   setInterval(updateClock, 1000);
   updateClock();
 
-  // Freshness & Stale Checker (Triggers after 2 minutes of no new smartwatch data)
+  // Freshness Monitor
   setInterval(checkFreshness, 5000);
 
   function checkFreshness() {
     if (!state.lastReadingTimestamp) return;
     const elapsed = Date.now() - state.lastReadingTimestamp;
 
-    if (elapsed > 120000) { // > 2 minutes
+    if (elapsed > 120000) { // 2 minutes
       if (readingStateEl) readingStateEl.textContent = 'No fresh smartwatch measurement received.';
       if (readingDotEl) readingDotEl.style.background = '#64748b';
       if (heartIcon) heartIcon.style.animationDuration = '0s';
@@ -137,12 +137,11 @@ document.addEventListener('DOMContentLoaded', () => {
     return { name: 'PEAK', color: '#ff4d6d', bg: 'rgba(255, 77, 109, 0.25)', alert: true, msg: 'High Heart Rate Warning (Peak Zone)' };
   }
 
-  // Process ONLY Genuine Android Telemetry
   function processGenuineReading(data) {
     if (!data || typeof data.bpm !== 'number' || isNaN(data.bpm)) return;
-    if (data.sourceType !== 'REAL_WATCH') return; // Strict Frontend Filter
+    if (data.sourceType !== 'REAL_WATCH') return;
 
-    // Unique Identifier Deduplication
+    // Deduplication check
     const uniqueId = data.id || `${data.timestamp}_${data.bpm}_${data.deviceId}`;
     if (state.seenIds.has(uniqueId)) return;
     state.seenIds.add(uniqueId);
@@ -189,7 +188,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sourceEl) sourceEl.textContent = data.source || 'PRISM_8E23';
     if (deviceIdEl) deviceIdEl.textContent = data.deviceId || 'PRISM_8E23';
 
-    // Increment Genuine Totals
     state.readings.push(data.bpm);
     state.totalCount++;
     if (countEl) countEl.textContent = state.totalCount;
@@ -201,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
       status: 'VERIFIED_WATCH'
     });
 
-    // Recompute Analytics
     const min = Math.min(...state.readings);
     const max = Math.max(...state.readings);
     const avg = Math.round(state.readings.reduce((a, b) => a + b, 0) / state.readings.length);
@@ -210,7 +207,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (maxBpmEl) maxBpmEl.textContent = max;
     if (avgBpmEl) avgBpmEl.textContent = avg;
 
-    // Update Chart
     if (state.chart) {
       state.chart.data.labels.push(formattedTime);
       state.chart.data.datasets[0].data.push(data.bpm);
@@ -242,7 +238,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // App Ingestion Handshake
   async function init() {
     updateBackendConnectionState('connecting');
 
@@ -262,7 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Connect SSE for Live Telemetry
     if (state.eventSource) state.eventSource.close();
     state.eventSource = new EventSource('/api/live');
 
@@ -285,7 +279,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // CSV Export Functionality
   if (exportCsvBtn) {
     exportCsvBtn.addEventListener('click', () => {
       if (state.historyRecords.length === 0) {
@@ -306,7 +299,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Copy Endpoint Button
   if (copyEndpointBtn) {
     copyEndpointBtn.addEventListener('click', () => {
       navigator.clipboard.writeText('/api/heart-rate').then(() => {
