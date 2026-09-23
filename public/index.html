@@ -6,23 +6,21 @@
   <meta name="theme-color" content="#0b1020">
   <title>SmartCare • Live Heart Monitor</title>
 
-  <!-- Fonts & Chart.js -->
+  <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Manrope:wght@600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
   
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <!-- Ambient Background Glows -->
   <div class="ambient-glow ambient-glow-primary" aria-hidden="true"></div>
   <div class="ambient-glow ambient-glow-secondary" aria-hidden="true"></div>
 
   <!-- Real-time Alert Banner -->
   <div id="alertBanner" class="alert-banner hidden" role="alert">
-    <span class="alert-icon">⚠️</span>
-    <span id="alertMessage">High Heart Rate Detected!</span>
+    <span class="alert-icon" aria-hidden="true">⚠️</span>
+    <span id="alertMessage">High Heart Rate Alert</span>
   </div>
 
   <header class="app-header">
@@ -31,7 +29,7 @@
         <span class="brand-icon" aria-hidden="true">✚</span>
         <span class="brand-text">
           smartcare<span class="brand-accent">/sync</span>
-          <small class="brand-tagline">CONNECTED HEALTH</small>
+          <small class="brand-tagline">AUTHENTIC HEALTH MONITOR</small>
         </span>
       </a>
 
@@ -46,7 +44,6 @@
   </header>
 
   <main class="app-main wrap">
-    <!-- Welcome Header -->
     <section class="welcome-section">
       <div class="welcome-content">
         <div class="eyebrow">
@@ -54,7 +51,7 @@
           <span class="eyebrow-line" aria-hidden="true"></span>
         </div>
         <h1>Your heart, <em>in real time.</em></h1>
-        <p>Live heart-rate telemetry received from your SmartCare Android application.</p>
+        <p>Verified smartwatch telemetry received from SmartCare Android Sync.</p>
       </div>
 
       <div class="time-card">
@@ -69,11 +66,11 @@
     <!-- Top Dashboard Grid -->
     <section class="dashboard-grid primary-grid">
       
-      <!-- Live Heart Rate Card -->
+      <!-- Primary Live Heart Rate Card -->
       <article class="card card-hero">
         <header class="card-header">
           <div>
-            <span class="kicker">LIVE TELEMETRY</span>
+            <span class="kicker">GENUINE TELEMETRY</span>
             <h2>Heart rate</h2>
           </div>
           <span class="status-badge status-live">
@@ -87,7 +84,7 @@
               <span class="bpm-number" id="bpm">--</span>
               <span class="bpm-unit">bpm</span>
             </div>
-            <div class="zone-badge" id="zoneBadge">NORMAL</div>
+            <div class="zone-badge" id="zoneBadge">--</div>
             <div class="heart-icon-wrapper" aria-hidden="true">
               <span class="heart-icon" id="heartIcon">♥</span>
             </div>
@@ -107,7 +104,7 @@
 
           <div class="reading-state-bar">
             <span class="state-dot" id="readingDot"></span>
-            <span id="readingState">Waiting for data...</span>
+            <span id="readingState">Waiting for a genuine Android reading...</span>
           </div>
 
           <!-- Chart Container -->
@@ -157,7 +154,7 @@
           <div class="stat-item">
             <div class="stat-icon icon-mint">↗</div>
             <div class="stat-content">
-              <small>Latest reading</small>
+              <small>Latest Genuine Reading</small>
               <strong id="latestStat" class="stat-value">— <small>bpm</small></strong>
               <span class="stat-subtext" id="latestTime">Waiting for data</span>
             </div>
@@ -166,9 +163,9 @@
           <div class="stat-item">
             <div class="stat-icon icon-violet">▤</div>
             <div class="stat-content">
-              <small>Total Readings</small>
+              <small>Total Genuine Readings</small>
               <strong id="count" class="stat-value">0</strong>
-              <span class="stat-subtext">Received this session</span>
+              <span class="stat-subtext">Received from Android app</span>
             </div>
           </div>
 
@@ -177,7 +174,7 @@
             <div class="stat-content">
               <small>Source Device</small>
               <strong id="source" class="stat-value source-name">Not connected</strong>
-              <span class="stat-subtext" id="deviceId">Device ID unavailable</span>
+              <span class="stat-subtext" id="deviceId">PRISM_8E23</span>
             </div>
           </div>
         </div>
@@ -185,20 +182,18 @@
         <footer class="card-footer notice-footer">
           <div class="disclaimer-notice">
             <span class="notice-icon">ⓘ</span>
-            <p>Smartwatch telemetry is for demonstration and non-diagnostic monitoring only.</p>
+            <p>Only verified measurements uploaded from com.example.smartcaresync are displayed.</p>
           </div>
         </footer>
       </article>
     </section>
 
-    <!-- History & Control Panel Grid -->
+    <!-- History & Connection Info -->
     <section class="dashboard-grid secondary-grid">
-      
-      <!-- Activity Feed -->
       <article class="card card-feed">
         <header class="card-header">
           <div>
-            <span class="kicker">RECENT ACTIVITY</span>
+            <span class="kicker">AUTHENTIC TELEMETRY</span>
             <h2>Reading history</h2>
           </div>
           <button id="exportCsvBtn" class="btn btn-secondary btn-sm">Export CSV ⤓</button>
@@ -211,13 +206,13 @@
                 <th>TIME</th>
                 <th>HEART RATE</th>
                 <th>SOURCE</th>
-                <th>ZONE</th>
+                <th>STATUS</th>
               </tr>
             </thead>
             <tbody id="history">
               <tr>
                 <td colspan="4" class="table-empty-state">
-                  Waiting for Android app to transmit BLE telemetry...
+                  Waiting for a genuine Android reading...
                 </td>
               </tr>
             </tbody>
@@ -225,17 +220,20 @@
         </div>
       </article>
 
-      <!-- Connection & Demo Simulator -->
       <article class="card card-connect">
         <header class="card-header">
           <div>
-            <span class="kicker">INTEGRATION & TEST</span>
-            <h2>Simulator & API</h2>
+            <span class="kicker">ANDROID INTEGRATION</span>
+            <h2>SmartCare Sync Contract</h2>
           </div>
           <div class="card-icon-badge">⌘</div>
         </header>
 
         <div class="card-body">
+          <p class="connect-description">
+            Your Android SmartCare Sync application (`com.example.smartcaresync`) sends smartwatch telemetry to this endpoint.
+          </p>
+
           <div class="form-group">
             <label>API Endpoint</label>
             <div class="endpoint-input-group">
@@ -244,21 +242,10 @@
             </div>
           </div>
 
-          <hr class="stat-divider">
-
-          <!-- Simulator Panel -->
-          <div class="simulator-panel">
-            <label>Telemetry Simulator</label>
-            <div class="sim-btn-group">
-              <button class="btn btn-outline btn-sm sim-btn" data-preset="resting">Resting (55)</button>
-              <button class="btn btn-outline btn-sm sim-btn" data-preset="normal">Normal (75)</button>
-              <button class="btn btn-outline btn-sm sim-btn" data-preset="cardio">Cardio (125)</button>
-              <button class="btn btn-outline btn-sm sim-btn" data-preset="peak">Peak (165)</button>
-            </div>
-
-            <div class="sim-actions">
-              <button id="demoBtn" class="btn btn-primary btn-block">Send Single Pulse ↗</button>
-              <button id="streamToggleBtn" class="btn btn-secondary btn-block">Start Live Stream ⟳</button>
+          <div class="form-group">
+            <label>Android Request Header Requirement</label>
+            <div class="endpoint-input-group">
+              <code class="code-block">x-smartcare-api-key: sc_live_app_secret_8e23</code>
             </div>
           </div>
         </div>
@@ -267,6 +254,8 @@
   </main>
 
   <div id="toast" class="toast">Copied to clipboard</div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>
