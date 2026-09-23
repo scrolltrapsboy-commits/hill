@@ -9,19 +9,19 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// In-memory data store
 let readings = [];
 let sseClients = [];
 
-// Helper: Classify telemetry data source safely
+// Classify reading sources securely
 function classifySource(body, req) {
-  const rawSource = (body.source || '').toUpperCase();
-  const isSim = body.isSimulator || rawSource.includes('SIMULATOR') || rawSource.includes('DEMO');
+  const rawSource = String(body.source || '').toUpperCase();
+  const isSim = Boolean(body.isSimulator) || rawSource.includes('SIMULATOR') || rawSource.includes('DEMO');
   
   if (isSim) {
     return { type: 'SIMULATOR', label: 'Simulator / Test' };
   }
   
-  // Verify genuine Android BLE client signature vs unverified HTTP posts
   const userAgent = req.get('User-Agent') || '';
   const isAndroidClient = userAgent.includes('SmartCareAndroid') || req.headers['x-smartcare-client'] === 'android-ble';
   
@@ -37,10 +37,13 @@ function broadcastReading(reading) {
   sseClients.forEach(client => {
     try {
       client.res.write(data);
-    } catch (err) {}
+    } catch (err) {
+      // Handled via close event
+    }
   });
 }
 
+// Health Check
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
@@ -52,6 +55,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// GET all readings with optional source filter
 app.get('/api/readings', (req, res) => {
   const filter = req.query.type;
   let filtered = readings;
@@ -61,6 +65,7 @@ app.get('/api/readings', (req, res) => {
   res.json({ success: true, count: filtered.length, data: filtered });
 });
 
+// GET latest reading with freshness flag
 app.get('/api/readings/latest', (req, res) => {
   if (readings.length === 0) {
     return res.json({ success: true, data: null });
@@ -69,7 +74,7 @@ app.get('/api/readings/latest', (req, res) => {
   const latest = readings[readings.length - 1];
   const now = Date.now();
   const readingTime = new Date(latest.timestamp).getTime();
-  const isFresh = (now - readingTime) < 120000;
+  const isFresh = (now - readingTime) < 120000; // 2-minute freshness threshold
 
   res.json({
     success: true,
@@ -80,6 +85,7 @@ app.get('/api/readings/latest', (req, res) => {
   });
 });
 
+// SSE Live Stream
 app.get('/api/live', (req, res) => {
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
@@ -98,22 +104,23 @@ app.get('/api/live', (req, res) => {
   });
 });
 
+// POST Heart Rate
 app.post('/api/heart-rate', (req, res) => {
   const { bpm, timestamp, source, deviceId } = req.body;
   const numericBpm = Number(bpm);
 
   if (!bpm || isNaN(numericBpm) || numericBpm < 30 || numericBpm > 250) {
-    return res.status(400).json({ success: false, error: 'Invalid BPM value (30-250).' });
+    return res.status(400).json({ success: false, error: 'Invalid BPM value (must be between 30 and 250).' });
   }
 
   const classification = classifySource(req.body, req);
   const nowIso = new Date().toISOString();
   const measurementTime = timestamp || nowIso;
 
-  // Deduplication check
+  // Server-side Deduplication: reject identical BPM from same device within 1 second
   const isDuplicate = readings.some(r => 
     r.bpm === Math.round(numericBpm) &&
-    r.deviceId === (deviceId || 'UNKNOWN') &&
+    r.deviceId === (deviceId || 'UNKNOWN_DEVICE') &&
     Math.abs(new Date(r.timestamp).getTime() - new Date(measurementTime).getTime()) < 1000
   );
 
@@ -122,7 +129,7 @@ app.post('/api/heart-rate', (req, res) => {
   }
 
   const reading = {
-    id: `read_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+    id: `read_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
     bpm: Math.round(numericBpm),
     timestamp: measurementTime,
     serverReceivedAt: nowIso,
@@ -139,12 +146,13 @@ app.post('/api/heart-rate', (req, res) => {
   res.status(201).json({ success: true, data: reading });
 });
 
+// Admin Endpoint: Clear legacy unverified or simulator records
 app.post('/api/admin/reset-demo', (req, res) => {
   const initialCount = readings.length;
   readings = readings.filter(r => r.sourceType === 'REAL_WATCH');
   res.json({
     success: true,
-    message: `Cleared ${initialCount - readings.length} simulated/unverified records. Retained ${readings.length} real watch records.`
+    message: `Cleared ${initialCount - readings.length} simulated/unverified records. Retained ${readings.length} real smartwatch records.`
   });
 });
 
