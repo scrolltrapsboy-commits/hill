@@ -6,14 +6,11 @@ document.addEventListener('DOMContentLoaded', () => {
     maxReadings: 25,
     chart: null,
     totalCount: 0,
-    isStreaming: false,
-    streamTimer: null,
-    selectedPreset: 'normal',
     eventSource: null,
-    lastReadingTime: null
+    lastReadingTimestamp: null
   };
 
-  // Element Cache
+  // Element Selectors
   const bpmEl = document.getElementById('bpm');
   const zoneBadgeEl = document.getElementById('zoneBadge');
   const readingStateEl = document.getElementById('readingState');
@@ -30,14 +27,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const historyTbody = document.getElementById('history');
   const clockEl = document.getElementById('clock');
   const heartIcon = document.getElementById('heartIcon');
-  const demoBtn = document.getElementById('demoBtn');
-  const streamToggleBtn = document.getElementById('streamToggleBtn');
   const copyEndpointBtn = document.getElementById('copyEndpoint');
   const exportCsvBtn = document.getElementById('exportCsvBtn');
   const toastEl = document.getElementById('toast');
   const connectionLabel = document.getElementById('connectionLabel');
   const statusLed = document.getElementById('statusLed');
-  const simButtons = document.querySelectorAll('.sim-btn');
+  const zoneMeterFill = document.getElementById('zoneMeterFill');
+  const alertBanner = document.getElementById('alertBanner');
+  const alertMessage = document.getElementById('alertMessage');
 
   // Local Clock
   function updateClock() {
@@ -46,25 +43,25 @@ document.addEventListener('DOMContentLoaded', () => {
   setInterval(updateClock, 1000);
   updateClock();
 
-  // Monitor stale readings (>2 mins)
-  setInterval(checkStaleStatus, 5000);
+  // Freshness & Stale Checker (Triggers after 2 minutes of no new smartwatch data)
+  setInterval(checkFreshness, 5000);
 
-  function checkStaleStatus() {
-    if (!state.lastReadingTime) return;
-    const elapsedMs = Date.now() - state.lastReadingTime;
-    
-    if (elapsedMs > 120000) {
+  function checkFreshness() {
+    if (!state.lastReadingTimestamp) return;
+    const elapsed = Date.now() - state.lastReadingTimestamp;
+
+    if (elapsed > 120000) { // > 2 minutes
       if (readingStateEl) readingStateEl.textContent = 'No fresh smartwatch measurement received.';
       if (readingDotEl) readingDotEl.style.background = '#64748b';
       if (heartIcon) heartIcon.style.animationDuration = '0s';
     }
   }
 
-  function updateConnectionState(status) {
+  function updateBackendConnectionState(status) {
     if (!connectionLabel || !statusLed) return;
     switch (status) {
       case 'connected':
-        connectionLabel.textContent = 'Connected (Live)';
+        connectionLabel.textContent = 'Server Connected';
         statusLed.style.background = '#00f5d4';
         statusLed.style.boxShadow = '0 0 10px #00f5d4';
         break;
@@ -76,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
       case 'failed':
       case 'disconnected':
-        connectionLabel.textContent = 'Disconnected';
+        connectionLabel.textContent = 'Server Offline';
         statusLed.style.background = '#ff4d6d';
         statusLed.style.boxShadow = '0 0 10px #ff4d6d';
         break;
@@ -88,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('chartCanvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    
+
     const gradient = ctx.createLinearGradient(0, 0, 0, 160);
     gradient.addColorStop(0, 'rgba(255, 77, 109, 0.45)');
     gradient.addColorStop(1, 'rgba(255, 77, 109, 0.0)');
@@ -133,41 +130,66 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Process and Deduplicate Ingested Reading
-  function processReading(data) {
-    if (!data || typeof data.bpm !== 'number' || isNaN(data.bpm)) return;
+  function getHeartRateZone(bpm) {
+    if (bpm < 60) return { name: 'RESTING', color: '#3a86ff', bg: 'rgba(58, 134, 255, 0.15)', alert: false };
+    if (bpm <= 100) return { name: 'NORMAL', color: '#00f5d4', bg: 'rgba(0, 245, 212, 0.15)', alert: false };
+    if (bpm <= 140) return { name: 'CARDIO', color: '#ffb703', bg: 'rgba(255, 183, 3, 0.15)', alert: true, msg: 'Elevated Heart Rate (Cardio Zone)' };
+    return { name: 'PEAK', color: '#ff4d6d', bg: 'rgba(255, 77, 109, 0.25)', alert: true, msg: 'High Heart Rate Warning (Peak Zone)' };
+  }
 
-    // Deduplication check
-    const uniqueId = data.id || `${data.timestamp}_${data.bpm}_${data.deviceId || 'unk'}`;
+  // Process ONLY Genuine Android Telemetry
+  function processGenuineReading(data) {
+    if (!data || typeof data.bpm !== 'number' || isNaN(data.bpm)) return;
+    if (data.sourceType !== 'REAL_WATCH') return; // Strict Frontend Filter
+
+    // Unique Identifier Deduplication
+    const uniqueId = data.id || `${data.timestamp}_${data.bpm}_${data.deviceId}`;
     if (state.seenIds.has(uniqueId)) return;
     state.seenIds.add(uniqueId);
 
     const timestamp = new Date(data.timestamp || Date.now());
     const formattedTime = timestamp.toLocaleTimeString();
-    state.lastReadingTime = timestamp.getTime();
+    state.lastReadingTimestamp = timestamp.getTime();
 
-    const isRealWatch = data.sourceType === 'REAL_WATCH';
-    const sourceLabel = isRealWatch ? `${data.source} [WATCH]` : `${data.source || 'Simulated'}`;
+    const zone = getHeartRateZone(data.bpm);
 
     if (bpmEl) bpmEl.textContent = data.bpm;
-    if (readingStateEl) {
-      readingStateEl.textContent = isRealWatch 
-        ? `Live Telemetry Active (${data.sourceType})` 
-        : `Telemetry Received (${data.sourceType || 'UNVERIFIED'})`;
-    }
-
+    if (readingStateEl) readingStateEl.textContent = `Genuine Android Reading Received (${zone.name})`;
+    if (readingDotEl) readingDotEl.style.background = zone.color;
     if (lastSeenEl) lastSeenEl.textContent = formattedTime;
-    if (latestStatEl) latestStatEl.innerHTML = `${data.bpm} <small>bpm</small>`;
-    if (latestTimeEl) latestTimeEl.textContent = formattedTime;
-    if (sourceEl) sourceEl.textContent = sourceLabel;
-    if (deviceIdEl) deviceIdEl.textContent = data.deviceId || 'DEV_UNKNOWN';
 
     if (heartIcon) {
       const beatDuration = (60 / data.bpm).toFixed(2);
       heartIcon.style.animationDuration = `${beatDuration}s`;
     }
 
-    // Accumulate unique counts
+    if (zoneBadgeEl) {
+      zoneBadgeEl.textContent = zone.name;
+      zoneBadgeEl.style.color = zone.color;
+      zoneBadgeEl.style.background = zone.bg;
+    }
+
+    if (zoneMeterFill) {
+      const percentage = Math.min(Math.max(((data.bpm - 40) / (180 - 40)) * 100, 5), 100);
+      zoneMeterFill.style.width = `${percentage}%`;
+      zoneMeterFill.style.background = zone.color;
+    }
+
+    if (alertBanner && alertMessage) {
+      if (zone.alert) {
+        alertMessage.textContent = zone.msg;
+        alertBanner.classList.remove('hidden');
+      } else {
+        alertBanner.classList.add('hidden');
+      }
+    }
+
+    if (latestStatEl) latestStatEl.innerHTML = `${data.bpm} <small>bpm</small>`;
+    if (latestTimeEl) latestTimeEl.textContent = formattedTime;
+    if (sourceEl) sourceEl.textContent = data.source || 'PRISM_8E23';
+    if (deviceIdEl) deviceIdEl.textContent = data.deviceId || 'PRISM_8E23';
+
+    // Increment Genuine Totals
     state.readings.push(data.bpm);
     state.totalCount++;
     if (countEl) countEl.textContent = state.totalCount;
@@ -175,11 +197,11 @@ document.addEventListener('DOMContentLoaded', () => {
     state.historyRecords.push({
       time: formattedTime,
       bpm: data.bpm,
-      source: sourceLabel,
-      type: data.sourceType || 'UNVERIFIED'
+      source: data.source || 'PRISM_8E23',
+      status: 'VERIFIED_WATCH'
     });
 
-    // Recalculate Min, Max, Avg
+    // Recompute Analytics
     const min = Math.min(...state.readings);
     const max = Math.max(...state.readings);
     const avg = Math.round(state.readings.reduce((a, b) => a + b, 0) / state.readings.length);
@@ -199,21 +221,19 @@ document.addEventListener('DOMContentLoaded', () => {
       state.chart.update();
     }
 
-    addHistoryRow(formattedTime, data.bpm, sourceLabel, data.sourceType);
+    addHistoryRow(formattedTime, data.bpm, data.source || 'PRISM_8E23');
   }
 
-  function addHistoryRow(time, bpm, source, sourceType) {
+  function addHistoryRow(time, bpm, source) {
     if (!historyTbody) return;
     if (state.totalCount === 1) historyTbody.innerHTML = '';
-
-    const typeColor = sourceType === 'REAL_WATCH' ? '#00f5d4' : (sourceType === 'SIMULATOR' ? '#ffb703' : '#94a3b8');
 
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>${time}</td>
       <td><strong>${bpm} bpm</strong></td>
       <td>${source}</td>
-      <td><span style="color:${typeColor}; font-weight:700;">${sourceType || 'UNVERIFIED'}</span></td>
+      <td><span style="color:#00f5d4; font-weight:700;">VERIFIED</span></td>
     `;
 
     historyTbody.insertBefore(row, historyTbody.firstChild);
@@ -222,130 +242,71 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // App Initialization & Backend Handshake
+  // App Ingestion Handshake
   async function init() {
-    updateConnectionState('connecting');
+    updateBackendConnectionState('connecting');
 
     try {
       const res = await fetch('/api/readings');
       if (res.ok) {
         const json = await res.json();
         if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-          json.data.forEach(r => processReading(r));
+          json.data.forEach(r => processGenuineReading(r));
         } else {
-          if (readingStateEl) readingStateEl.textContent = 'Waiting for the first real heart-rate reading.';
+          if (readingStateEl) readingStateEl.textContent = 'Waiting for a genuine Android reading...';
         }
       }
     } catch (err) {
-      console.warn('Failed to load initial history:', err);
+      updateBackendConnectionState('failed');
+      if (readingStateEl) readingStateEl.textContent = 'Unable to connect to SmartCare server.';
+      return;
     }
 
-    // Connect SSE
+    // Connect SSE for Live Telemetry
     if (state.eventSource) state.eventSource.close();
     state.eventSource = new EventSource('/api/live');
 
     state.eventSource.addEventListener('ready', () => {
-      updateConnectionState('connected');
+      updateBackendConnectionState('connected');
     });
 
     state.eventSource.addEventListener('heart-rate', (e) => {
       try {
-        processReading(JSON.parse(e.data));
+        processGenuineReading(JSON.parse(e.data));
       } catch (err) {
-        console.error('Invalid SSE payload:', err);
+        console.error('Invalid EventSource payload:', err);
       }
     });
 
     state.eventSource.onerror = () => {
-      updateConnectionState('reconnecting');
+      updateBackendConnectionState('reconnecting');
       state.eventSource.close();
       setTimeout(init, 5000);
     };
   }
 
-  // Simulator Controls
-  simButtons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      simButtons.forEach(b => b.classList.remove('active'));
-      e.target.classList.add('active');
-      state.selectedPreset = e.target.getAttribute('data-preset');
-    });
-  });
-
-  function generatePresetBpm(preset) {
-    switch (preset) {
-      case 'resting': return Math.floor(Math.random() * 10) + 52;
-      case 'cardio': return Math.floor(Math.random() * 20) + 120;
-      case 'peak': return Math.floor(Math.random() * 20) + 155;
-      case 'normal':
-      default: return Math.floor(Math.random() * 15) + 70;
-    }
-  }
-
-  if (demoBtn) {
-    demoBtn.addEventListener('click', async () => {
-      await fetch('/api/heart-rate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bpm: generatePresetBpm(state.selectedPreset),
-          timestamp: new Date().toISOString(),
-          source: 'WEB_SIMULATOR',
-          isSimulator: true,
-          deviceId: 'SIM_CLIENT'
-        })
-      });
-    });
-  }
-
-  if (streamToggleBtn) {
-    streamToggleBtn.addEventListener('click', () => {
-      state.isStreaming = !state.isStreaming;
-
-      if (state.isStreaming) {
-        streamToggleBtn.textContent = 'Stop Stream ⏹';
-        streamToggleBtn.classList.add('btn-danger');
-        state.streamTimer = setInterval(async () => {
-          await fetch('/api/heart-rate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              bpm: generatePresetBpm(state.selectedPreset),
-              timestamp: new Date().toISOString(),
-              source: 'WEB_SIMULATOR',
-              isSimulator: true,
-              deviceId: 'SIM_STREAM'
-            })
-          });
-        }, 2000);
-      } else {
-        streamToggleBtn.textContent = 'Start Live Stream ⟳';
-        streamToggleBtn.classList.remove('btn-danger');
-        clearInterval(state.streamTimer);
-      }
-    });
-  }
-
+  // CSV Export Functionality
   if (exportCsvBtn) {
     exportCsvBtn.addEventListener('click', () => {
       if (state.historyRecords.length === 0) {
-        alert('No data available to export.');
+        alert('No genuine reading data available to export.');
         return;
       }
-      let csvContent = 'data:text/csv;charset=utf-8,Time,BPM,Source,Type\n';
+      let csvContent = 'data:text/csv;charset=utf-8,Time,BPM,Source,Status\n';
       state.historyRecords.forEach(r => {
-        csvContent += `${r.time},${r.bpm},${r.source},${r.type}\n`;
+        csvContent += `${r.time},${r.bpm},${r.source},${r.status}\n`;
       });
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement('a');
       link.setAttribute('href', encodedUri);
-      link.setAttribute('download', `SmartCare_Session_${Date.now()}.csv`);
+      link.setAttribute('download', `SmartCare_Genuine_Session_${Date.now()}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     });
   }
 
+  // Copy Endpoint Button
   if (copyEndpointBtn) {
     copyEndpointBtn.addEventListener('click', () => {
       navigator.clipboard.writeText('/api/heart-rate').then(() => {
