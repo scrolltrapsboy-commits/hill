@@ -6,19 +6,24 @@
   <meta name="theme-color" content="#0b1020">
   <title>SmartCare • Live Heart Monitor</title>
 
-  <!-- Fonts & Icons -->
+  <!-- Fonts & Chart.js -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Manrope:wght@600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
   
-  <!-- Chart.js Library -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+  <!-- Ambient Background Glows -->
   <div class="ambient-glow ambient-glow-primary" aria-hidden="true"></div>
   <div class="ambient-glow ambient-glow-secondary" aria-hidden="true"></div>
+
+  <!-- Real-time Alert Banner -->
+  <div id="alertBanner" class="alert-banner hidden" role="alert">
+    <span class="alert-icon">⚠️</span>
+    <span id="alertMessage">High Heart Rate Detected!</span>
+  </div>
 
   <header class="app-header">
     <div class="header-container">
@@ -41,6 +46,7 @@
   </header>
 
   <main class="app-main wrap">
+    <!-- Welcome Header -->
     <section class="welcome-section">
       <div class="welcome-content">
         <div class="eyebrow">
@@ -63,7 +69,7 @@
     <!-- Top Dashboard Grid -->
     <section class="dashboard-grid primary-grid">
       
-      <!-- Primary Live Heart Rate Card -->
+      <!-- Live Heart Rate Card -->
       <article class="card card-hero">
         <header class="card-header">
           <div>
@@ -87,12 +93,24 @@
             </div>
           </div>
 
+          <!-- HR Zone Meter Bar -->
+          <div class="zone-meter-wrapper">
+            <div class="zone-meter-labels">
+              <span>Resting (40)</span>
+              <span>Target Zone</span>
+              <span>Peak (180+)</span>
+            </div>
+            <div class="zone-meter-track">
+              <div id="zoneMeterFill" class="zone-meter-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+
           <div class="reading-state-bar">
             <span class="state-dot" id="readingDot"></span>
             <span id="readingState">Waiting for data...</span>
           </div>
 
-          <!-- Fixed Canvas Chart Container -->
+          <!-- Chart Container -->
           <div class="chart-wrapper">
             <canvas id="chartCanvas"></canvas>
           </div>
@@ -173,15 +191,17 @@
       </article>
     </section>
 
-    <!-- History & Connection Panel -->
+    <!-- History & Control Panel Grid -->
     <section class="dashboard-grid secondary-grid">
+      
+      <!-- Activity Feed -->
       <article class="card card-feed">
         <header class="card-header">
           <div>
             <span class="kicker">RECENT ACTIVITY</span>
             <h2>Reading history</h2>
           </div>
-          <span class="pill-tag">Latest 12</span>
+          <button id="exportCsvBtn" class="btn btn-secondary btn-sm">Export CSV ⤓</button>
         </header>
 
         <div class="table-responsive">
@@ -205,20 +225,17 @@
         </div>
       </article>
 
+      <!-- Connection & Demo Simulator -->
       <article class="card card-connect">
         <header class="card-header">
           <div>
-            <span class="kicker">APP INTEGRATION</span>
-            <h2>Connect SmartCare</h2>
+            <span class="kicker">INTEGRATION & TEST</span>
+            <h2>Simulator & API</h2>
           </div>
           <div class="card-icon-badge">⌘</div>
         </header>
 
         <div class="card-body">
-          <p class="connect-description">
-            Transmit real-time telemetry from your smartwatch or Android client using the REST endpoint below.
-          </p>
-
           <div class="form-group">
             <label>API Endpoint</label>
             <div class="endpoint-input-group">
@@ -227,10 +244,23 @@
             </div>
           </div>
 
-          <button id="demoBtn" class="btn btn-primary btn-block">
-            <span>Send Demo Pulse</span>
-            <span>↗</span>
-          </button>
+          <hr class="stat-divider">
+
+          <!-- Simulator Panel -->
+          <div class="simulator-panel">
+            <label>Telemetry Simulator</label>
+            <div class="sim-btn-group">
+              <button class="btn btn-outline btn-sm sim-btn" data-preset="resting">Resting (55)</button>
+              <button class="btn btn-outline btn-sm sim-btn" data-preset="normal">Normal (75)</button>
+              <button class="btn btn-outline btn-sm sim-btn" data-preset="cardio">Cardio (125)</button>
+              <button class="btn btn-outline btn-sm sim-btn" data-preset="peak">Peak (165)</button>
+            </div>
+
+            <div class="sim-actions">
+              <button id="demoBtn" class="btn btn-primary btn-block">Send Single Pulse ↗</button>
+              <button id="streamToggleBtn" class="btn btn-secondary btn-block">Start Live Stream ⟳</button>
+            </div>
+          </div>
         </div>
       </article>
     </section>
