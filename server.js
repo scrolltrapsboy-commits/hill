@@ -1,95 +1,126 @@
-const express = require("express");
-const cors = require("cors");
-const path = require("path");
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-const API_KEY = process.env.SMARTCARE_API_KEY || "";
-const MAX_HISTORY = 180;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
-app.use(express.json({ limit: "32kb" }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
+// In-memory data store
 let readings = [];
-let latest = null;
+let sseClients = [];
 
-function authorized(req, res, next) {
-  if (!API_KEY) return next(); // Configure SMARTCARE_API_KEY before deployment.
-  const supplied = req.get("x-smartcare-key");
-  if (supplied !== API_KEY) return res.status(401).json({ ok: false, error: "Unauthorized" });
-  next();
+// Helper: Broadcast reading to SSE clients
+function broadcastReading(reading) {
+  const data = `event: heart-rate\ndata: ${JSON.stringify(reading)}\n\n`;
+  sseClients.forEach(client => {
+    try {
+      client.res.write(data);
+    } catch (err) {
+      // Client connection issues handled in close event
+    }
+  });
 }
 
-function normalize(body) {
-  const bpm = Number(body?.bpm ?? body?.heartRate);
-  if (!Number.isFinite(bpm) || bpm < 25 || bpm > 240) return null;
-  const timestamp = body.timestamp ? new Date(body.timestamp) : new Date();
-  if (Number.isNaN(timestamp.getTime())) return null;
-  return {
-    id: `${timestamp.getTime()}-${Math.random().toString(36).slice(2, 8)}`,
-    bpm: Math.round(bpm),
-    timestamp: timestamp.toISOString(),
-    source: String(body.source || body.deviceName || "SmartCare BLE").slice(0, 80),
-    deviceId: String(body.deviceId || "").slice(0, 100)
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    uptime: process.argv[2] || process.uptime(),
+    timestamp: new Date().toISOString(),
+    totalReadings: readings.length,
+    activeConnections: sseClients.length
+  });
+});
+
+// GET all readings (chronological)
+app.get('/api/readings', (req, res) => {
+  res.json({
+    success: true,
+    count: readings.length,
+    data: readings
+  });
+});
+
+// GET latest reading
+app.get('/api/readings/latest', (req, res) => {
+  if (readings.length === 0) {
+    return res.json({
+      success: true,
+      data: null
+    });
+  }
+  res.json({
+    success: true,
+    data: readings[readings.length - 1]
+  });
+});
+
+// SSE Live Stream Endpoint
+app.get('/api/live', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders();
+
+  const clientId = Date.now();
+  const newClient = { id: clientId, res };
+  sseClients.push(newClient);
+
+  // Send initial 'ready' event
+  const latest = readings.length > 0 ? readings[readings.length - 1] : null;
+  res.write(`event: ready\ndata: ${JSON.stringify({ status: 'connected', latestReading: latest, totalReadings: readings.length })}\n\n`);
+
+  req.on('close', () => {
+    sseClients = sseClients.filter(client => client.id !== clientId);
+  });
+});
+
+// POST new heart rate reading
+app.post('/api/heart-rate', (req, res) => {
+  const { bpm, timestamp, source, deviceId } = req.body;
+
+  // Validation
+  const numericBpm = Number(bpm);
+  if (!bpm || isNaN(numericBpm) || numericBpm < 30 || numericBpm > 250) {
+    return res.status(400).json({
+      success: false,
+      error: 'Invalid BPM value. Must be a number between 30 and 250.'
+    });
+  }
+
+  const reading = {
+    id: `read_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+    bpm: Math.round(numericBpm),
+    timestamp: timestamp || new Date().toISOString(),
+    source: source || 'Android Client',
+    deviceId: deviceId || 'UNKNOWN_DEVICE'
   };
-}
 
-app.get("/api/health", (_req, res) => res.json({ ok: true, service: "SmartCare Heart API", timestamp: new Date().toISOString() }));
-app.get("/api/readings/latest", (_req, res) => res.json({ ok: true, latest }));
-app.get("/api/readings", (_req, res) => res.json({ ok: true, readings }));
-
-app.post("/api/heart-rate", authorized, (req, res) => {
-  const reading = normalize(req.body);
-  if (!reading) return res.status(400).json({ ok: false, error: "Provide a valid bpm (25–240) and valid timestamp." });
-  latest = reading;
   readings.push(reading);
-  if (readings.length > MAX_HISTORY) readings = readings.slice(-MAX_HISTORY);
-  res.status(201).json({ ok: true, reading });
-});
 
-// Server-Sent Events stream: dashboard receives new readings without polling.
-app.get("/api/live", (req, res) => {
-  res.set({
-    "Content-Type": "text/event-stream",
-    "Cache-Control": "no-cache",
-    "Connection": "keep-alive",
-    "X-Accel-Buffering": "no"
-  });
-  res.flushHeaders?.();
-  res.write(`event: ready\ndata: ${JSON.stringify({ latest, readings })}\n\n`);
-  const send = (reading) => res.write(`event: heart-rate\ndata: ${JSON.stringify(reading)}\n\n`);
-  const clients = app.locals.sseClients || (app.locals.sseClients = new Set());
-  clients.add(send);
-  const keepAlive = setInterval(() => res.write(": keepalive\n\n"), 20000);
-  req.on("close", () => {
-    clearInterval(keepAlive);
-    clients.delete(send);
+  // Keep last 1000 readings in memory
+  if (readings.length > 1000) {
+    readings.shift();
+  }
+
+  // Broadcast to all active SSE clients
+  broadcastReading(reading);
+
+  res.status(201).json({
+    success: true,
+    data: reading
   });
 });
 
-const originalPost = app._router.stack.find(layer => layer.route?.path === "/api/heart-rate");
-if (originalPost) {
-  const route = originalPost.route;
-  const oldHandler = route.stack[route.stack.length - 1].handle;
-  route.stack[route.stack.length - 1].handle = function(req, res, next) {
-    const previousStatus = res.statusCode;
-    const oldJson = res.json.bind(res);
-    res.json = (payload) => {
-      if (res.statusCode === 201 && payload?.reading) {
-        for (const client of app.locals.sseClients || []) {
-          try { client(payload.reading); } catch (_) {}
-        }
-      }
-      return oldJson(payload);
-    };
-    return oldHandler(req, res, next);
-  };
-}
-
-app.get("*", (req, res, next) => {
-  if (req.path.startsWith("/api/")) return res.status(404).json({ ok: false, error: "API endpoint not found" });
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+// Fallback to static app
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(PORT, "0.0.0.0", () => console.log(`SmartCare Heart Dashboard running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`SmartCare Sync Server running on port ${PORT}`);
+});
